@@ -33,11 +33,17 @@ function UploadScreen() {
     useEffect(() => {
       axios({
         method: 'POST',
-        url: 'http://localhost:8080/',
+        url: 'http://localhost:8080/api/post',
         data: {
           // 인자로 보낼 데이터
-          photoURL: '',
-          description: description,
+          // photoURL: '',
+          user_no: 1,
+          status: 'S',
+          post_title: 'test title',
+          model_name: 'iphone XE',
+          grade: 'A',
+          price: 0,
+          post_content: description,
         },
       }).then(response => setPost(response.data));
     });
