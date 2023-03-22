@@ -17,6 +17,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import IconRightButton from '../components/IconRightButton';
 //import posts from '../../lib/posts';
 import axios from 'axios';
+import FeedScreen from './FeedScreen';
 
 function UploadScreen() {
   const route = useRoute();
@@ -24,35 +25,69 @@ function UploadScreen() {
   const {width} = useWindowDimensions();
   const animation = useRef(new Animated.Value(width)).current;
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
-  const [description, setDescription] = useState('');
-  const navigation = useNavigation();
-  const [posts, setPost] = useState();
 
-  const onSubmit = useCallback(() => {
-    // TODO: 포스트 작성 로직 구현
-    useEffect(() => {
-      axios({
-        method: 'POST',
-        url: 'http://localhost:8080/api/post',
-        data: {
-          // 인자로 보낼 데이터
-          // photoURL: '',
-          user_no: 1,
-          status: 'S',
-          post_title: 'test title',
-          model_name: 'iphone XE',
-          grade: 'A',
-          price: 0,
-          post_content: description,
+  const [post, setPost] = useState({});
+
+  const [status, setStatus] = useState('');
+  const [title, setTitle] = useState('');
+  const [model, setModel] = useState('');
+  const [price, setPrice] = useState('');
+  const [grade, setGrade] = useState('');
+  const [description, setDescription] = useState('');
+
+  const navigation = useNavigation();
+
+  const formData = new FormData();
+  const onSubmit = () => {
+    changeForm();
+    formData.append(
+      'post',
+      new Blob([JSON.stringify(post)], {type: 'application/json'}),
+    );
+    const imageLists = res.assets;
+    for (let i = 0; i < imageLists.length; i++) {
+      formData.append('files', imageLists[i]);
+    }
+    // console.log(formData.get('files'));
+    // console.log(formData.get('post'));
+    axios
+      .post('http://10.0.2.2:8080/api/post', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
-      }).then(response => setPost(response.data));
+      })
+      .catch(function (error) {
+        console.log('여기를 탔음 1');
+        console.log(error);
+      });
+    navigation.navigate('Feed');
+  };
+  const changeForm = () => {
+    setPost({
+      user_no: 1,
+      status: 'S',
+      post_title: title,
+      model_name: 'iphone XE',
+      grade: grade,
+      price: price,
+      post_content: description,
     });
-    console.log(posts);
+  };
+  useEffect(() => {
+    setPost({
+      user_no: 1,
+      status: 'S',
+      post_title: 'test title',
+      model_name: 'iphone XE',
+      grade: 'A',
+      price: 0,
+      post_content: description,
+    });
   }, []);
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => <IconRightButton onPress={onSubmit} name="send" />,
+      headerRight: () => <IconRightButton name="send" onPress={onSubmit} />,
     });
   }, [navigation, onSubmit]);
 
@@ -83,14 +118,36 @@ function UploadScreen() {
     <View style={styles.block}>
       <Animated.Image
         source={{uri: res.assets[0]?.uri}}
-        style={[styles.image, {height: animation}]}
+        style={[styles.image]}
         resizeMode="cover"
       />
       <TextInput
         style={styles.input}
-        multiline={true}
-        placeholder="이 사진에 대한 설명을 입력하세요..."
-        textAlignVertical="top"
+        placeholder="제목"
+        value={title}
+        onChangeText={setTitle}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="모델명"
+        value={model}
+        onChangeText={setModel}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="손상도"
+        value={grade}
+        onChangeText={setGrade}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="가격"
+        value={price}
+        onChangeText={setPrice}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="상품 설명"
         value={description}
         onChangeText={setDescription}
       />
@@ -102,14 +159,19 @@ const styles = StyleSheet.create({
   block: {
     flex: 1,
   },
-  image: {width: '100%'},
+  image: {width: 100, height: 100, resizeMode: 'cover'},
   input: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 16,
-    flex: 1,
-    fontSize: 16,
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
   },
 });
+
+// formData.append('file', data.file);
+// formData.append(
+//   'key',
+//   new Blob([JSON.stringify(data.info)], {type: 'application/json'}),
+// );
 
 export default UploadScreen;
