@@ -37,17 +37,16 @@ function UploadScreen() {
 
   const navigation = useNavigation();
 
-  const formData = new FormData();
   const onSubmit = () => {
+    const formData = new FormData();
     changeForm();
     formData.append(
       'post',
       new Blob([JSON.stringify(post)], {type: 'application/json'}),
     );
-    const imageLists = res.assets;
-    for (let i = 0; i < imageLists.length; i++) {
-      formData.append('files', imageLists[i]);
-    }
+
+    formData.append('files', res.assets[0].uri);
+
     // console.log(formData.get('files'));
     // console.log(formData.get('post'));
     axios

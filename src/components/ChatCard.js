@@ -1,22 +1,7 @@
 import React, {useMemo} from 'react';
 import {View, StyleSheet, Text, Image, Pressable} from 'react-native';
 
-function PostCard({
-  grade,
-  model_name,
-  post_content,
-  post_no,
-  post_title,
-  price,
-  status,
-  updateat,
-  photoURL,
-}) {
-  // const date = useMemo(
-  //   () => (createdAt ? new Date(createdAt._seconds * 1000) : new Date()),
-  //   [createdAt],
-  // );
-
+function ChatCard({Chat_User, Chat_Content, photoURL}) {
   const onOpenProfile = () => {
     // TODO: 사용자 프로필 화면 열기
   };
@@ -30,15 +15,9 @@ function PostCard({
         resizeMode="cover"
       />
       <View style={styles.textBlock}>
-        <Text>{post_title}</Text>
-        <Text>
-          상태 {grade} 급 {post_content}
-        </Text>
+        <Text>{Chat_User}</Text>
         <Text></Text>
-        <Text>{price}</Text>
-        <Text date={updateat} style={styles.date}>
-          {updateat}
-        </Text>
+        <Text>{Chat_Content}</Text>
       </View>
       <View style={styles.paddingBlock}>
         {/* <Text style={styles.description}>{description}</Text> */}
@@ -94,4 +73,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PostCard;
+export default ChatCard;
