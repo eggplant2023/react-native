@@ -1,23 +1,25 @@
+import {FlatList, Pressable, StyleSheet, View} from 'react-native';
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, FlatList, Pressable} from 'react-native';
-import PostCard from '../components/PostCard';
-import PlusButton from '../components/PlusButton';
+import {useEffect, useState} from 'react';
+import PostCard from './PostCard';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 
-function FeedScreen() {
-  const [posts, setPosts] = useState({});
-  const navigation = useNavigation();
+function SaleCard(user) {
   const isFocused = useIsFocused(); // isFoucesd Define
-
+  const navigation = useNavigation();
+  const [posts, setPosts] = useState({});
+  const [filterdCard, setFilterdCard] = useState({});
+  console.log(user);
   useEffect(() => {
     // 컴포넌트가 처음 마운트될 때 포스트 목록을 조회한 후 `posts` 상태에 담기
     axios
       .get('http://10.0.2.2:8080/api/post')
       .then(function (res) {
         // 성공 핸들링
-        //console.log(res.data);
+        //console.log('SaleCard res data is : ', res.data);
         setPosts(res.data);
+        console.log('SaleCard posts is : ', posts);
+        filterCard();
       })
       .catch(function (error) {
         // 에러 핸들링
@@ -28,15 +30,13 @@ function FeedScreen() {
         // 항상 실행되는 영역
       });
   }, [isFocused]);
-
-  useEffect(() => {
-    if (!!posts) {
-      //console.log('posts : ', posts);
-    }
-  }, [posts]);
-
+  function filterCard() {
+    posts.map(item => {
+      console.log('filterCard is :', item);
+      const test = user.filter(item => item.id == checkId);
+    });
+  }
   const renderItem = ({item}) => (
-    //console.log('item is : ', item),
     <Pressable
       onPress={() => {
         navigation.navigate('View', item);
@@ -57,16 +57,20 @@ function FeedScreen() {
 
   return (
     <View style={styles.container}>
-      <FlatList data={posts} renderItem={renderItem} />
-      <PlusButton />
+      <FlatList
+        data={posts}
+        renderItem={renderItem}
+        contentContainerStyle={{flexGrow: 1}}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
+    paddingBottom: 15,
   },
 });
 
-export default FeedScreen;
+export default SaleCard;

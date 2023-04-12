@@ -10,7 +10,8 @@ import ChatStack from './ChatStack';
 
 const Tab = createBottomTabNavigator();
 
-function MainTab() {
+function MainTab({user}) {
+  const sigColor = '#CD67DE';
   return (
     <SafeAreaProvider>
       <View style={styles.block}>
@@ -19,7 +20,7 @@ function MainTab() {
             screenOptions={{
               headerShown: false,
               tabBarShowLabel: false,
-              tabBarActiveTintColor: '#6200ee',
+              tabBarActiveTintColor: sigColor,
             }}
             initialRouteName="Feeds">
             <Tab.Screen
@@ -42,7 +43,9 @@ function MainTab() {
             />
             <Tab.Screen
               name="MyProfileStack"
-              component={MyProfileStack}
+              children={() => {
+                return <MyProfileStack user={user} />;
+              }}
               options={{
                 tabBarIcon: ({color}) => (
                   <Icon name="person" size={24} color={color} />

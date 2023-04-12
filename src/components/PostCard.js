@@ -30,8 +30,10 @@ function PostCard({
         resizeMode="cover"
       />
       <View style={styles.textBlock}>
-        <Text>{post_title}</Text>
-        <Text>
+        <Text style={{fontSize: 17, fontWeight: 'bold', color: 'black'}}>
+          {post_title}
+        </Text>
+        <Text style={{fontWeight: '500', color: 'black', marginTop: 10}}>
           상태 {grade} 급 {post_content}
         </Text>
         <Text></Text>
@@ -77,10 +79,10 @@ const styles = StyleSheet.create({
   },
   image: {
     backgroundColor: '#bdbdbd',
-    width: '20%',
+    width: '28%',
     aspectRatio: 1,
-    marginBottom: 16,
     marginLeft: 20,
+    borderRadius: 10,
   },
   description: {
     fontSize: 16,
