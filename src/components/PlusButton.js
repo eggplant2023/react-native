@@ -15,11 +15,13 @@ const imagePickerOption = {
   includeBase64: Platform.OS === 'android',
 };
 
+const sigColor = '#CD67DE';
+
 function PlusButton() {
   const insets = useSafeAreaInsets();
-  const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
 
+  const [modalVisible, setModalVisible] = useState(false);
   const imagePickerOption = {
     mediaType: 'photo',
     maxWidth: 768,
@@ -61,16 +63,10 @@ function PlusButton() {
             color: '#ffffff',
           }}
           style={styles.circle}
-          onPress={() => setModalVisible(true)}>
-          <Icon name="add" color="white" size={24} />
+          onPress={() => navigation.navigate('Upload')}>
+          <Icon name="add" color="white" size={50} />
         </Pressable>
       </View>
-      <UploadModeModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onLaunchCamera={onLaunchCamera}
-        onLaunchImageLibrary={onLaunchImageLibrary}
-      />
     </>
   );
 }
@@ -103,7 +99,7 @@ const styles = StyleSheet.create({
     }),
   },
   circle: {
-    backgroundColor: '#6200ee',
+    backgroundColor: sigColor,
     borderRadius: 30,
     height: 60,
     width: 60,

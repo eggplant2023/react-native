@@ -1,39 +1,70 @@
-import {useNavigation} from '@react-navigation/native';
-import {useState} from 'react';
+import {useNavigation, useIsFocused} from '@react-navigation/native';
+import {useState, useEffect} from 'react';
 import {StyleSheet, View, FlatList, Pressable} from 'react-native';
 import ChatCard from '../components/ChatCard';
 import ChatRoomScreen from './ChatRoomScreen';
+import axios from 'axios';
 
 function ChatLobbyScreen() {
   const navigation = useNavigation();
-  const [chatRooms, setChatRooms] = useState([
-    {
-      roomId: 1,
-      message: [
-        {user: '사기꾼', text: '싸게싸게 모십니다', createdAt: new Date()},
-      ],
-    },
-    {
-      roomId: 2,
-      message: [
-        {user: '미친이용자', text: '벽돌 받아라~', createdAt: new Date()},
-      ],
-    },
-  ]);
+  const [chatRooms, setChatRooms] = useState([{}]);
+
+  const isFocused = useIsFocused(); // isFoucesd Define
+
+  useEffect(() => {
+    // 컴포넌트가 처음 마운트될 때 포스트 목록을 조회한 후 `posts` 상태에 담기
+    axios
+      .get('http://10.0.2.2:8080/api/chattingroom/guest/1')
+      .then(function (res) {
+        // 성공 핸들링
+        console.log('chattingroom/guest/1 is : ', res.data);
+        setChatRooms(res.data);
+        //console.log('chatRoom is : ', chatRooms);
+      })
+      .catch(function (error) {
+        // 에러 핸들링
+        console.log('여기를 탔어요');
+        console.log(error);
+      })
+      .finally(function () {
+        // 항상 실행되는 영역
+      });
+  }, [isFocused]);
+  useEffect(() => {
+    if (!!chatRooms) {
+      console.log('chatRooms is : ', chatRooms);
+    }
+  }, [chatRooms]);
+
+  // useEffect(() => {
+  //   // 컴포넌트가 처음 마운트될 때 포스트 목록을 조회한 후 `posts` 상태에 담기
+  //   axios
+  //     .get('http://10.0.2.2:8080/api/chatting/2')
+  //     .then(function (res) {
+  //       // 성공 핸들링
+  //       console.log('chatting/2 is : ', res.data);
+  //       //setPosts(res.data);
+  //     })
+  //     .catch(function (error) {
+  //       // 에러 핸들링
+  //       console.log('여기를 탔어요');
+  //       console.log(error);
+  //     })
+  //     .finally(function () {
+  //       // 항상 실행되는 영역
+  //     });
+  // }, [isFocused]);
 
   const renderItem = ({item}) => (
-    // console.log('item is : ', item);
+    //console.log('item is : ', item);
     <Pressable
       onPress={() => {
-        console.log('item is : ', item.message);
+        console.log('item is : ', item);
         // console.log('user is : ', item.message[0].user);
         // console.log('text is : ', item.message[0].text);
-        navigation.navigate('Room', item.message);
+        navigation.navigate('Room', item);
       }}>
-      <ChatCard
-        Chat_User={item.message[0].user}
-        Chat_Content={item.message[0].text}
-      />
+      <ChatCard Chat_User={item.post_name} Chat_Content={item.last_cht_msg} />
     </Pressable>
   );
   return (

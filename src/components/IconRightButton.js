@@ -1,6 +1,8 @@
 import React from 'react';
-import {StyleSheet, View, Pressable, Platform} from 'react-native';
+import {StyleSheet, View, Pressable, Platform, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
+const sigColor = '#CD67DE';
 
 function IconRightButton({name, color, onPress}) {
   return (
@@ -15,14 +17,14 @@ function IconRightButton({name, color, onPress}) {
         ]}
         onPress={onPress}
         android_ripple={{color: '#eee'}}>
-        <Icon name={name} color={color} size={24} />
+        <Text style={{fontSize: 20, color: sigColor}}>완료</Text>
       </Pressable>
     </View>
   );
 }
 
 IconRightButton.defaultProps = {
-  color: '#6200ee',
+  color: sigColor,
 };
 
 const styles = StyleSheet.create({
