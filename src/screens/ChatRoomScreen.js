@@ -20,12 +20,13 @@ function ChatRoomScreen({route}) {
   const [currentUser, setCurrentUser] = useState(route.params.user[0].user_id);
   const [idCount, setIdCount] = useState(0);
 
-  const chatUrl = 'http://10.0.2.2:8080/ws-stomp';
+  //const chatUrl = 'http://10.0.2.2:8080/ws-stomp';
+  const chatUrl = 'http://52.78.130.186:8080/ws-stomp';
 
   const onMessageReceive = (msg, topic) => {
     console.log('메세지 수신');
     console.log(msg);
-    if (msg.cht_member == currentUser) {
+    if (msg.cht_room_num == route.params.item.cht_room_no) {
       const chat = {
         _id: idCount,
         text: msg.cht_text,
@@ -38,6 +39,7 @@ function ChatRoomScreen({route}) {
       setChatList([...chatList, chat]);
     }
   };
+  useEffect(() => {}, [chatList]);
 
   const onSendMessage = msg => {
     try {
@@ -74,15 +76,13 @@ function ChatRoomScreen({route}) {
 
   useEffect(() => {
     axios
-      .get(`http://10.0.2.2:8080/api/chatting/${route.params.item.cht_room_no}`)
+      .get(
+        `http://52.78.130.186:8080/api/chatting/${route.params.item.cht_room_no}`,
+      )
       .then(function (res) {
-        // 성공 핸들링
-        //console.log(`chatting/${route.params.cht_room_no} is : `, res.data);
-        //console.log('채팅룸의 리소스 데이터는 이것입니다.', res.data);
         let temp = res.data.chattingList;
         setIdCount(temp.length);
         temp.map((item, index) => {
-          //IdCount = index;
           const chat = {
             _id: index,
             text: item.cht_text,
@@ -91,7 +91,6 @@ function ChatRoomScreen({route}) {
           };
           temp[index] = chat;
         });
-        //console.log('res.data.chattingList is : ', res.data.chattingList);
         setChatList(temp);
       })
       .catch(function (error) {

@@ -19,14 +19,14 @@ function FeedScreen() {
   useEffect(() => {
     // 컴포넌트가 처음 마운트될 때 포스트 목록을 조회한 후 `posts` 상태에 담기
     axios
-      .get('http://10.0.2.2:8080/api/post')
+      .get('http://52.78.130.186:8080/api/post')
       .then(function (res) {
         // 성공 핸들링
         let temp = res.data;
-        for (let i = 0; i < temp.length; i++) {
-          temp[i] = {...temp[i], photoUrl: photoUrl[i]};
-        }
-        setPosts(temp);
+        // for (let i = 0; i < temp.length; i++) {
+        //   temp[i] = {...temp[i], photoUrl: photoUrl[i]};
+        // }
+        setPosts(res.data);
       })
       .catch(function (error) {
         // 에러 핸들링

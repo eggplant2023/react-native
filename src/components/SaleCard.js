@@ -20,7 +20,7 @@ function SaleCard(user) {
   useEffect(() => {
     // 컴포넌트가 처음 마운트될 때 포스트 목록을 조회한 후 `posts` 상태에 담기
     axios
-      .get('http://10.0.2.2:8080/api/post')
+      .get('http://52.78.130.186:8080:8080/api/post')
       .then(function (res) {
         // 성공 핸들링
         //console.log('SaleCard res data is : ', res.data);

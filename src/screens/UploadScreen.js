@@ -122,7 +122,7 @@ function UploadScreen() {
     console.log(formData);
     // console.log(formData.get('post'));
     axios
-      .post('http://10.0.2.2:8080/api/post/native', formData, {
+      .post('http://52.78.130.186:8080/api/post/native', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
