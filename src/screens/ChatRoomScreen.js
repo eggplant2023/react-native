@@ -1,44 +1,98 @@
 import {GiftedChat, SystemMessage, Bubble} from 'react-native-gifted-chat';
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import React from 'react';
+import SockJsClient from 'react-stomp';
+import {View} from 'react-native';
 
 const sigColor = '#CD67DE';
 
 function ChatRoomScreen({route}) {
-  //console.log(route.params.cht_room_no);
+  //console.log('채팅 라우트 item 이것입니다.', route.params.item);
+  //console.log('채팅 라우트 user_id 이것입니다.', route.params.user[0].user_id);
+  //console.log('채팅방 유저정보는 이것입니다. : ', user);
   //const [messages, setMessages] = useState([]);
-  const [messages, setMessages] = useState([]);
+  const [chatList, setChatList] = useState([]);
+  const [clientConnected, setClientConnected] = useState(false);
+  const [apponent, setApponent] = useState('');
+  const topic = `/sub/chat/room/${route.params.item.cht_room_no}`;
+  const clientRef = useRef(null);
+  const [currentUser, setCurrentUser] = useState(route.params.user[0].user_id);
+  const [idCount, setIdCount] = useState(0);
+
+  const chatUrl = 'http://10.0.2.2:8080/ws-stomp';
+
+  const onMessageReceive = (msg, topic) => {
+    console.log('메세지 수신');
+    console.log(msg);
+    if (msg.cht_member == currentUser) {
+      const chat = {
+        _id: idCount,
+        text: msg.cht_text,
+        //authorId: msg.cht_member,
+        //author: msg.cht_member_name,
+        createdAt: msg.cht_time,
+        user: {_id: msg.cht_member},
+      };
+      console.log(chat);
+      setChatList([...chatList, chat]);
+    }
+  };
+
+  const onSendMessage = msg => {
+    try {
+      var send_message = {
+        cht_room_num: route.params.item.cht_room_no,
+        cht_member: parseInt(currentUser),
+        cht_text: msg[0].text,
+      };
+      clientRef.current.sendMessage(
+        '/pub/chat/sendMessage',
+        JSON.stringify(send_message),
+      );
+      console.log(send_message);
+      console.log('메세지전송!!');
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  };
+  const setMessages = msg => {
+    setChatList([...chatList, msg]);
+  };
+
+  const onConnect = () => {
+    console.log('소켓 연결성공!!!!');
+    setClientConnected(true);
+  };
+
+  const onDisconnect = () => {
+    console.log('소켓 연결해제!!!!');
+    setClientConnected(true);
+  };
 
   useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello developer',
-        createdAt: new Date(),
-        user: {
-          _id: 1,
-        },
-      },
-      {
-        _id: 2,
-        text: 'hi',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-        },
-      },
-    ]);
-  }, []);
-
-  useEffect(() => {
-    // 컴포넌트가 처음 마운트될 때 포스트 목록을 조회한 후 `posts` 상태에 담기
     axios
-      .get(`http://10.0.2.2:8080/api/chatting/${route.params.cht_room_no}`)
+      .get(`http://10.0.2.2:8080/api/chatting/${route.params.item.cht_room_no}`)
       .then(function (res) {
         // 성공 핸들링
-        console.log(`chatting/${route.params.cht_room_no} is : `, res.data);
-        //setPosts(res.data);
+        //console.log(`chatting/${route.params.cht_room_no} is : `, res.data);
+        //console.log('채팅룸의 리소스 데이터는 이것입니다.', res.data);
+        let temp = res.data.chattingList;
+        setIdCount(temp.length);
+        temp.map((item, index) => {
+          //IdCount = index;
+          const chat = {
+            _id: index,
+            text: item.cht_text,
+            createdAt: item.cht_time,
+            user: {_id: item.cht_member},
+          };
+          temp[index] = chat;
+        });
+        //console.log('res.data.chattingList is : ', res.data.chattingList);
+        setChatList(temp);
       })
       .catch(function (error) {
         // 에러 핸들링
@@ -50,28 +104,24 @@ function ChatRoomScreen({route}) {
       });
   }, []);
 
-  // useEffect(() => {
-  //   setMessages(route.params);
-  //   console.log('messages is :', messages);
-  // }, [messages]);
-  // useEffect(() => {
-  //   if (!!messages) {
-  //     //console.log('posts : ', posts);
-  //   }
-  // }, [messages]);
-
-  // const onSend = React.useCallback((msg = []) => {
-  //   setMessages(previousMessages => GiftedChat.append(previousMessages, msg));
-  // }, []);
+  useEffect(() => {
+    if (!!idCount) {
+      console.log('idCount is : ', idCount);
+      console.log('chatList is : ', chatList);
+    }
+  }, [idCount]);
 
   function renderBubble(props) {
+    //console.log('renderBubble is : ', props.currentMessage.user._id);
     const message_sender_id = props.currentMessage.user._id;
     // console.log('message_sender_id is :', message_sender_id);
     // console.log('route.params.cht_member is :', route.params.cht_member);
     return (
       <Bubble
         {...props}
-        position={message_sender_id == 2 ? 'right' : 'left'}
+        position={
+          message_sender_id == route.params.user[0].user_id ? 'right' : 'left'
+        }
         textStyle={{
           right: {
             color: 'white',
@@ -89,37 +139,47 @@ function ChatRoomScreen({route}) {
           },
           left: {
             backgroundColor: '#E6E6E6',
-            marginLeft: -32,
+            marginLeft: '5%',
             marginVertical: 5,
           },
         }}
       />
     );
   }
-  return (
-    <GiftedChat
-      messages={messages}
-      renderBubble={renderBubble}
-      user={{
-        _id: '1',
-      }}
 
-      //onSend={messages => onSend(messages)}
-      //   isTyping={true}
-      //   renderSystemMessage={this.onRenderSystemMessage}
-      //   renderUsernameOnMessage={true}
-      //   renderSend={RenderSend}
-      //   // textInputProps= {{  autoFocus : true  }}
-      //   textInputStyle={{alignSelf: 'center'}}
-      //   onPressActionButton={() => {}}
-      //   alwaysShowSend={true}
-      //   showUserAvatar={true}
-      //   placeholder="메시지를 입력하세요."
-      //   user={{
-      //     _id: 2,
-      //     name: 'beanzinu',
-      //  }}
-    />
+  return (
+    <View style={{flex: 1}}>
+      <GiftedChat
+        messages={chatList}
+        renderBubble={renderBubble}
+        inverted={false}
+        onSend={onSendMessage}
+        //   isTyping={true}
+        //   renderSystemMessage={this.onRenderSystemMessage}
+        //   renderUsernameOnMessage={true}
+        //   renderSend={RenderSend}
+        //   // textInputProps= {{  autoFocus : true  }}
+        //   textInputStyle={{alignSelf: 'center'}}
+        //   onPressActionButton={() => {}}
+        //   alwaysShowSend={true}
+        //   showUserAvatar={true}
+        //   placeholder="메시지를 입력하세요."
+        //   user={{
+        //     _id: 2,
+        //     name: 'beanzinu',
+        //  }}
+      />
+      <SockJsClient
+        url={chatUrl}
+        topics={[topic]}
+        onMessage={onMessageReceive}
+        ref={clientRef}
+        onConnect={onConnect}
+        onDisconnect={onDisconnect}
+        debug={false}
+        style={[{width: '100%', height: '90%'}]}
+      />
+    </View>
   );
 }
 export default ChatRoomScreen;

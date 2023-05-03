@@ -18,19 +18,14 @@ function ViewPostScreen(route) {
       route.route.params.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
     );
     if (!!props) {
-      console.log('props is : ', props);
+      // console.log('route.route.params', route.route.params);
+      // console.log('props is : ', props);
     }
   }, [props]);
-
   return (
     <View style={styles.block}>
       <View style={styles.imageBlock}>
-        <Image
-          source={{uri: props.photoURL}}
-          style={styles.image}
-          resizeMethod="resize"
-          resizeMode="cover"
-        />
+        <Image source={props.photoUrl} style={styles.image} />
       </View>
       <View style={styles.userBlock}>
         <Image style={styles.userImage} />
@@ -108,6 +103,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   imageBlock: {
+    flex: 1,
     backgroundColor: 'black',
     alignItems: 'center',
   },
@@ -136,7 +132,7 @@ const styles = StyleSheet.create({
   },
   image: {
     backgroundColor: '#bdbdbd',
-    width: '90%',
+    height: '100%',
     aspectRatio: 1,
   },
   button: {

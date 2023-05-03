@@ -7,7 +7,7 @@ const Stack = createNativeStackNavigator();
 function MyProfileStack({user}) {
   const isFocused = useIsFocused(); // isFoucesd Define
   useEffect(() => {
-    console.log('MyProfileStack props is', user);
+    //console.log('MyProfileStack props is', user);
   }, [isFocused]);
   return (
     <Stack.Navigator>

@@ -4,10 +4,15 @@ import ChatRoomScreen from './ChatRoomScreen';
 
 const Stack = createNativeStackNavigator();
 
-function ChatStack() {
+function ChatStack({user}) {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Lobby" component={ChatLobbyScreen} />
+      <Stack.Screen
+        name="Lobby"
+        children={() => {
+          return <ChatLobbyScreen user={user} />;
+        }}
+      />
       <Stack.Screen name="Room" component={ChatRoomScreen} />
     </Stack.Navigator>
   );

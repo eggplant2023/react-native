@@ -1,22 +1,15 @@
-import React, {useMemo} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {View, StyleSheet, Text, Image, Pressable} from 'react-native';
 
-function PostCard({
-  grade,
-  model_name,
-  post_content,
-  post_no,
-  post_title,
-  price,
-  status,
-  updateat,
-  photoURL,
-}) {
+function PostCard({props}) {
   // const date = useMemo(
   //   () => (createdAt ? new Date(createdAt._seconds * 1000) : new Date()),
   //   [createdAt],
   // );
-
+  var url = '';
+  useEffect(() => {
+    //console.log('props is :', props);
+  }, []);
   const onOpenProfile = () => {
     // TODO: 사용자 프로필 화면 열기
   };
@@ -24,22 +17,22 @@ function PostCard({
   return (
     <View style={styles.block}>
       <Image
-        source={{uri: photoURL}}
+        source={props.photoUrl}
         style={styles.image}
         resizeMethod="resize"
         resizeMode="cover"
       />
       <View style={styles.textBlock}>
         <Text style={{fontSize: 17, fontWeight: 'bold', color: 'black'}}>
-          {post_title}
+          {props.post_title}
         </Text>
         <Text style={{fontWeight: '500', color: 'black', marginTop: 10}}>
-          상태 {grade} 급 {post_content}
+          상태 {props.grade} 급 {props.post_content}
         </Text>
         <Text></Text>
-        <Text>{price}</Text>
-        <Text date={updateat} style={styles.date}>
-          {updateat}
+        <Text>{props.price}</Text>
+        <Text date={props.updateat} style={styles.date}>
+          {props.updateat}
         </Text>
       </View>
       <View style={styles.paddingBlock}>
