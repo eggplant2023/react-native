@@ -9,6 +9,13 @@ function SaleCard(user) {
   const navigation = useNavigation();
   const [posts, setPosts] = useState({});
   const [filterdCard, setFilterdCard] = useState({});
+  const photoUrl = [
+    require('ReactNativeFront/src/assets/image/model/1.jpeg'),
+    require('ReactNativeFront/src/assets/image/model/2.jpeg'),
+    require('ReactNativeFront/src/assets/image/model/3.jpeg'),
+    require('ReactNativeFront/src/assets/image/model/4.jpeg'),
+    require('ReactNativeFront/src/assets/image/model/5.jpeg'),
+  ];
   console.log(user);
   useEffect(() => {
     // 컴포넌트가 처음 마운트될 때 포스트 목록을 조회한 후 `posts` 상태에 담기
@@ -17,8 +24,11 @@ function SaleCard(user) {
       .then(function (res) {
         // 성공 핸들링
         //console.log('SaleCard res data is : ', res.data);
-        setPosts(res.data);
-        console.log('SaleCard posts is : ', posts);
+        let temp = res.data;
+        for (let i = 0; i < temp.length; i++) {
+          temp[i] = {...temp[i], photoUrl: photoUrl[i]};
+        }
+        setPosts(temp);
         filterCard();
       })
       .catch(function (error) {
@@ -41,17 +51,7 @@ function SaleCard(user) {
       onPress={() => {
         navigation.navigate('View', item);
       }}>
-      <PostCard
-        grade={item.grade}
-        model_name={item.model_name}
-        post_content={item.post_content}
-        post_no={item.post_no}
-        post_title={item.post_title}
-        price={item.price}
-        status={item.status}
-        updateat={item.updateat}
-        photoURL={item.photoURL}
-      />
+      <PostCard props={item} />
     </Pressable>
   );
 

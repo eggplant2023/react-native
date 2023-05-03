@@ -62,12 +62,12 @@ function UploadScreen() {
     if (res.didCancel || !res) {
       return;
     }
-    console.log(res.data);
+    //console.log(res.data);
     setPothoUri(res);
   };
   useEffect(() => {
     if (!!pothoUri) {
-      //console.log('pothoUri : ', pothoUri);
+      console.log('pothoUri : ', pothoUri);
     }
   }, [pothoUri]);
 
@@ -104,28 +104,27 @@ function UploadScreen() {
 
   const onSubmit = () => {
     const formData = new FormData();
-    formData.append(
-      'post',
-      new Blob([JSON.stringify(post)], {type: 'application/json'}),
-    );
+    formData.append('model_name', 'iphone XE');
+    formData.append('user_no', '1');
+    formData.append('grade', 'S');
+    formData.append('status', 'S');
+    formData.append('price', '10000');
+    formData.append('post_title', 'react Native');
+    formData.append('post_content', 'react native test');
 
-    let img = {
-      uri: pothoUri.assets,
-      type: 'image/jpeg',
-      name: `0.jpg`,
+    const file = {
+      name: pothoUri.assets[0].fileName,
+      type: pothoUri.assets[0].type,
+      uri: pothoUri.assets[0].uri,
     };
+    formData.append('files', file);
 
-    formData.append('files', img);
-
-    //console.log(formData._parts);
+    console.log(formData);
     // console.log(formData.get('post'));
     axios
-      .post('http://10.0.2.2:8080/api/post', formData, {
+      .post('http://10.0.2.2:8080/api/post/native', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-        },
-        transformRequest: (data, headers) => {
-          return data;
         },
       })
       .catch(function (error) {

@@ -4,10 +4,10 @@ import CategoryCard from '../components/CategoryCard';
 import SaleCard from '../components/SaleCard';
 
 function MyProfileScreen({user}) {
-  console.log('MyProfileScreen user is : ', user[0].id);
+  //console.log('MyProfileScreen user is : ', user[0].id);
   const [state, setState] = useState('구매 내역');
   useEffect(() => {
-    console.log('state is : ', state);
+    //console.log('state is : ', state);
   }, [state]);
 
   return (

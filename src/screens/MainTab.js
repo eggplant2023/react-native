@@ -25,7 +25,9 @@ function MainTab({user}) {
             initialRouteName="Feeds">
             <Tab.Screen
               name="ChatStack"
-              component={ChatStack}
+              children={() => {
+                return <ChatStack user={user} />;
+              }}
               options={{
                 tabBarIcon: ({color}) => (
                   <Icon name="chat" size={24} color={color} />
@@ -40,6 +42,7 @@ function MainTab({user}) {
                   <Icon name="home" size={24} color={color} />
                 ),
               }}
+              style={{flex: 1}}
             />
             <Tab.Screen
               name="MyProfileStack"
