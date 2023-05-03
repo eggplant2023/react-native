@@ -6,18 +6,12 @@ function PostCard({props}) {
   //   () => (createdAt ? new Date(createdAt._seconds * 1000) : new Date()),
   //   [createdAt],
   // );
-  var url = '';
-  useEffect(() => {
-    //console.log('props is :', props);
-  }, []);
-  const onOpenProfile = () => {
-    // TODO: 사용자 프로필 화면 열기
-  };
+  console.log('포스트 카드의 props is : ', props);
 
   return (
     <View style={styles.block}>
       <Image
-        source={props.photoUrl}
+        source={{uri: props.pictureURL[0]}}
         style={styles.image}
         resizeMethod="resize"
         resizeMode="cover"
