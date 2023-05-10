@@ -22,7 +22,7 @@ function MainTab({user}) {
               tabBarShowLabel: false,
               tabBarActiveTintColor: sigColor,
             }}
-            initialRouteName="Feeds">
+            initialRouteName="HomeStack">
             <Tab.Screen
               name="ChatStack"
               children={() => {

@@ -11,21 +11,23 @@ function ViewPostScreen(route) {
     warn: '#FEF9E9',
     alert: '#FBD9D9',
   };
-
+  console.log('route.route.params', route.route.params);
   useEffect(() => {
     setProps(route.route.params);
     setPrice(
       route.route.params.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
     );
     if (!!props) {
-      // console.log('route.route.params', route.route.params);
       // console.log('props is : ', props);
     }
   }, [props]);
   return (
     <View style={styles.block}>
       <View style={styles.imageBlock}>
-        <Image source={props.photoUrl} style={styles.image} />
+        <Image
+          source={{uri: route.route.params.pictureURL[0]}}
+          style={styles.image}
+        />
       </View>
       <View style={styles.userBlock}>
         <Image style={styles.userImage} />

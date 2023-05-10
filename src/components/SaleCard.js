@@ -9,26 +9,26 @@ function SaleCard(user) {
   const navigation = useNavigation();
   const [posts, setPosts] = useState({});
   const [filterdCard, setFilterdCard] = useState({});
-  const photoUrl = [
-    require('ReactNativeFront/src/assets/image/model/1.jpeg'),
-    require('ReactNativeFront/src/assets/image/model/2.jpeg'),
-    require('ReactNativeFront/src/assets/image/model/3.jpeg'),
-    require('ReactNativeFront/src/assets/image/model/4.jpeg'),
-    require('ReactNativeFront/src/assets/image/model/5.jpeg'),
-  ];
+  // const photoUrl = [
+  //   require('ReactNativeFront/src/assets/image/model/1.jpeg'),
+  //   require('ReactNativeFront/src/assets/image/model/2.jpeg'),
+  //   require('ReactNativeFront/src/assets/image/model/3.jpeg'),
+  //   require('ReactNativeFront/src/assets/image/model/4.jpeg'),
+  //   require('ReactNativeFront/src/assets/image/model/5.jpeg'),
+  // ];
   console.log(user);
   useEffect(() => {
     // 컴포넌트가 처음 마운트될 때 포스트 목록을 조회한 후 `posts` 상태에 담기
     axios
-      .get('http://52.78.130.186:8080:8080/api/post')
+      .get('http://52.78.130.186:8080/api/post')
       .then(function (res) {
         // 성공 핸들링
         //console.log('SaleCard res data is : ', res.data);
-        let temp = res.data;
-        for (let i = 0; i < temp.length; i++) {
-          temp[i] = {...temp[i], photoUrl: photoUrl[i]};
-        }
-        setPosts(temp);
+        // let temp = res.data;
+        // for (let i = 0; i < temp.length; i++) {
+        //   temp[i] = {...temp[i], photoUrl: photoUrl[i]};
+        // }
+        setPosts(res.data);
         filterCard();
       })
       .catch(function (error) {
