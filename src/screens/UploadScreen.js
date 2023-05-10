@@ -25,6 +25,8 @@ import UploadModeModal from '../components/UploadModeModal';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 
 const TABBAR_HEIGHT = 49;
+const FLASK_BASE_URL =
+  'http://ec2-52-78-130-186.ap-northeast-2.compute.amazonaws.com:5000';
 
 function UploadScreen() {
   const route = useRoute();
@@ -102,22 +104,41 @@ function UploadScreen() {
     }
   }, [post]);
 
-  const onSubmit = () => {
-    const formData = new FormData();
-    formData.append('model_name', 'iphone XE');
-    formData.append('user_no', '1');
-    formData.append('grade', 'S');
-    formData.append('status', 'S');
-    formData.append('price', '10000');
-    formData.append('post_title', 'react Native');
-    formData.append('post_content', 'react native test');
-
+  const onClassification = () => {
+    const data = new FormData();
     const file = {
       name: pothoUri.assets[0].fileName,
       type: pothoUri.assets[0].type,
       uri: pothoUri.assets[0].uri,
     };
     formData.append('files', file);
+    axios.post(FLASK_BASE_URL + '/predict', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    axios.post(FLASK_BASE_URL + '/predict/smartphone', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  };
+  const onSubmit = () => {
+    const formData = new FormData();
+    formData.append('model_name', 'iphone XE');
+    formData.append('user_no', '1');
+    formData.append('grade', 'S');
+    formData.append('status', 'S');
+    formData.append('price', price);
+    formData.append('post_title', title);
+    formData.append('post_content', description);
+
+    // const file = {
+    //   name: pothoUri.assets[0].fileName,
+    //   type: pothoUri.assets[0].type,
+    //   uri: pothoUri.assets[0].uri,
+    // };
+    formData.append('files', pothoUri.assets[0].uri);
 
     console.log(formData);
     // console.log(formData.get('post'));

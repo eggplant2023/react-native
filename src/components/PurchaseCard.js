@@ -7,17 +7,7 @@ function PurchaseCard() {
       onPress={() => {
         navigation.navigate('View', item);
       }}>
-      <PostCard
-        grade={item.grade}
-        model_name={item.model_name}
-        post_content={item.post_content}
-        post_no={item.post_no}
-        post_title={item.post_title}
-        price={item.price}
-        status={item.status}
-        updateat={item.updateat}
-        photoURL={item.photoURL}
-      />
+      <PostCard props={item} />
     </Pressable>
   );
 
