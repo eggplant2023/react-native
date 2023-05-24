@@ -20,15 +20,17 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconRightButton from '../components/IconRightButton';
 //import posts from '../../lib/posts';
 import axios from 'axios';
-import FeedScreen from './FeedScreen';
 import UploadModeModal from '../components/UploadModeModal';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
+import {RadioButton} from 'react-native-paper';
 
 const TABBAR_HEIGHT = 49;
 const FLASK_BASE_URL =
   'http://ec2-52-78-130-186.ap-northeast-2.compute.amazonaws.com:5000';
+const sigColor = '#CD67DE';
 
-function UploadScreen() {
+function UploadScreen({user}) {
+  console.log('user is', user[0].user_id);
   const route = useRoute();
   const {res} = route.params || {};
   const {width} = useWindowDimensions();
@@ -43,8 +45,8 @@ function UploadScreen() {
   const [title, setTitle] = useState('');
   const [model, setModel] = useState('');
   const [price, setPrice] = useState('');
-  const [grade, setGrade] = useState('');
   const [description, setDescription] = useState('');
+  const [grade, setGrade] = useState('S');
 
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
@@ -66,12 +68,9 @@ function UploadScreen() {
     }
     //console.log(res.data);
     setPothoUri(res);
+    onClassification(res);
   };
-  useEffect(() => {
-    if (!!pothoUri) {
-      console.log('pothoUri : ', pothoUri);
-    }
-  }, [pothoUri]);
+  useEffect(() => {}, [pothoUri]);
 
   const onLaunchCamera = () => {
     launchCamera(imagePickerOption, onPickImage);
@@ -88,57 +87,58 @@ function UploadScreen() {
   };
 
   useEffect(() => {
-    setPost({
-      user_no: 1,
-      status: 'SS',
-      post_title: 'ssssss',
-      model_name: 'iphone XE',
-      grade: 'SSS',
-      price: 1000,
-      post_content: 'SSSSSS',
-    });
-  }, []);
-  useEffect(() => {
-    if (!!post) {
-      //console.log('post : ', post);
-    }
-  }, [post]);
+    console.log('grade : ', grade);
+  }, [grade]);
 
-  const onClassification = () => {
+  const onClassification = props => {
+    console.log('onClassification 탔어~');
+    console.log('pothoUri 안에 이게 있어요~', props);
     const data = new FormData();
+    const file = {
+      name: props.assets[0].fileName,
+      type: props.assets[0].type,
+      uri: props.assets[0].uri,
+    };
+    data.append('files', file);
+    axios
+      .post(FLASK_BASE_URL + '/predict', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then(res => {
+        console.log('FLASK_BASE_URL res 는 :', res.data);
+        if (res.data.answer === 'smartphone') {
+          axios
+            .post(FLASK_BASE_URL + '/predict/smartphone', data, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            })
+            .then(res => {
+              setModel(res.data.answer);
+              console.log('FLASK_BASE_URL/predict/smartphone res 는', res.data);
+            });
+        }
+      });
+  };
+
+  const onSubmit = () => {
+    const formData = new FormData();
+    formData.append('model_name', model);
+    formData.append('user_no', user[0].user_id);
+    formData.append('grade', grade);
+    formData.append('status', '판매중');
+    formData.append('price', price);
+    formData.append('post_title', title);
+    formData.append('post_content', description);
+
     const file = {
       name: pothoUri.assets[0].fileName,
       type: pothoUri.assets[0].type,
       uri: pothoUri.assets[0].uri,
     };
     formData.append('files', file);
-    axios.post(FLASK_BASE_URL + '/predict', data, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    axios.post(FLASK_BASE_URL + '/predict/smartphone', data, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-  };
-  const onSubmit = () => {
-    const formData = new FormData();
-    formData.append('model_name', 'iphone XE');
-    formData.append('user_no', '1');
-    formData.append('grade', 'S');
-    formData.append('status', 'S');
-    formData.append('price', price);
-    formData.append('post_title', title);
-    formData.append('post_content', description);
-
-    // const file = {
-    //   name: pothoUri.assets[0].fileName,
-    //   type: pothoUri.assets[0].type,
-    //   uri: pothoUri.assets[0].uri,
-    // };
-    formData.append('files', pothoUri.assets[0].uri);
 
     console.log(formData);
     // console.log(formData.get('post'));
@@ -218,7 +218,7 @@ function UploadScreen() {
               borderRadius: 10,
             }}>
             <Icon name="camera-outline" size={36} />
-            <Text>1/10</Text>
+            <Text>0/10</Text>
           </View>
         </Pressable>
       </View>
@@ -240,12 +240,59 @@ function UploadScreen() {
         value={model}
         onChangeText={setModel}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="손상도"
-        value={grade}
-        onChangeText={setGrade}
-      />
+      <Text style={styles.input1}>손상도</Text>
+      <View style={styles.radio}>
+        <View style={styles.radioblock}>
+          <Text>S</Text>
+          <RadioButton
+            color={sigColor}
+            value="S"
+            status={grade === 'S' ? 'checked' : 'unchecked'}
+            onPress={() => setGrade('S')}
+          />
+          <Text>100%</Text>
+        </View>
+        <View style={styles.radioblock}>
+          <Text>A</Text>
+          <RadioButton
+            color={sigColor}
+            value="A"
+            status={grade === 'A' ? 'checked' : 'unchecked'}
+            onPress={() => setGrade('A')}
+          />
+          <Text>90%</Text>
+        </View>
+        <View style={styles.radioblock}>
+          <Text>B</Text>
+          <RadioButton
+            color={sigColor}
+            value="B"
+            status={grade === 'B' ? 'checked' : 'unchecked'}
+            onPress={() => setGrade('B')}
+          />
+          <Text>80%</Text>
+        </View>
+        <View style={styles.radioblock}>
+          <Text>C</Text>
+          <RadioButton
+            color={sigColor}
+            value="C"
+            status={grade === 'C' ? 'checked' : 'unchecked'}
+            onPress={() => setGrade('C')}
+          />
+          <Text>70%</Text>
+        </View>
+        <View style={styles.radioblock}>
+          <Text>F</Text>
+          <RadioButton
+            color={sigColor}
+            value="F"
+            status={grade === 'F' ? 'checked' : 'unchecked'}
+            onPress={() => setGrade('F')}
+          />
+          <Text>60%</Text>
+        </View>
+      </View>
       <TextInput
         style={styles.input}
         placeholder="가격"
@@ -285,6 +332,21 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderBottomWidth: 0.5,
     padding: 10,
+  },
+  input1: {
+    height: 40,
+    marginTop: 12,
+    marginBottom: 12,
+    padding: 10,
+  },
+  radio: {
+    flexDirection: 'row',
+    marginLeft: 50,
+    marginRight: 50,
+    justifyContent: 'space-between',
+  },
+  radioblock: {
+    alignItems: 'center',
   },
 });
 

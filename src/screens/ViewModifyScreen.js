@@ -1,57 +1,50 @@
-import axios from 'axios';
 import {useEffect, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  Image,
-  Pressable,
-  Button,
-  ScrollView,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import {View, StyleSheet, Text, Image, Pressable, Button} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
-import WebView from 'react-native-webview';
+import IconRightButton from '../components/IconRightButton';
+import axios from 'axios';
 
-function ViewPostScreen(route) {
+function ViewModifyScreen(route) {
+  console.log('route is :', route);
   const [props, setProps] = useState({});
   const [price, setPrice] = useState(0);
-  const sigColor = '#CD67DE';
   const navigation = useNavigation();
+  const sigColor = '#CD67DE';
+
   const warnColor = {
     safe: '#EDE7FD',
     warn: '#FEF9E9',
     alert: '#FBD9D9',
   };
-  //console.log('route.route.params', route.route.params.user.user[0].user_id);
+
   useEffect(() => {
-    setProps(route.route.params.item);
+    setProps(route.route.params);
     setPrice(
-      route.route.params.item.price
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+      route.route.params.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
     );
     if (!!props) {
-      //console.log('props is : ', props);
+      console.log('props is : ', props);
     }
   }, [props]);
-  const createChattingroom = () => {
+
+  const deletePost = () => {
     axios
-      .get(
-        `http://52.78.130.186:8080/api/chattingroom/post/${props.post_num}/${route.route.params.user.user[0].user_id}`,
-      )
-      .then(res => {
-        let item = res.data;
-        let user = route.route.params.user.user;
-        navigation.navigate('Chat', {item, user});
+      .get(`http://52.78.130.186:8080/api/post/${props.post_num}/delete`)
+      .then(console.log('삭제 성공'))
+      .catch(function (error) {
+        // 에러 핸들링
+        console.log('삭제 실패');
+        console.log(error);
       });
+    navigation.navigate('MyProfile');
   };
+
   return (
     <View style={styles.block}>
       <View style={styles.imageBlock}>
         <Image
-          source={{uri: route.route.params.item.pictureURL[0]}}
+          source={{uri: route.route.params.pictureURL[0]}}
           style={styles.image}
         />
       </View>
@@ -62,10 +55,15 @@ function ViewPostScreen(route) {
             <Text style={{fontSize: 20, color: 'black'}}>{props.nickname}</Text>
             <Text>{props.status}</Text>
           </View>
-          <Text style={{paddingTop: 25}}>신고하기</Text>
+          <Pressable
+            onPress={() => {
+              console.log('수정하기');
+              navigation.navigate('ModifyScreenView', props);
+            }}>
+            <Text style={{paddingTop: 25}}>수정하기</Text>
+          </Pressable>
         </View>
       </View>
-
       <View style={styles.commentBlock}>
         <View style={styles.textBlock}>
           <Text style={{fontSize: 20, color: 'black'}}>{props.post_title}</Text>
@@ -76,10 +74,6 @@ function ViewPostScreen(route) {
             {props.updateat}
           </Text>
         </View>
-        {/* <WebView
-              source={{uri: 'http://52.78.130.186/map'}}
-              style={{height: 800}}
-            /> */}
         <View style={styles.paddingBlock}>
           <Icon
             name="star-border"
@@ -97,11 +91,7 @@ function ViewPostScreen(route) {
             {price}
           </Text>
           <View style={styles.button}>
-            <Button
-              title="채팅하기"
-              color={sigColor}
-              onPress={createChattingroom}
-            />
+            <Button title="게시물 삭제" color={sigColor} onPress={deletePost} />
           </View>
         </View>
       </View>
@@ -174,8 +164,8 @@ const styles = StyleSheet.create({
   },
   button: {
     paddingTop: 8,
-    width: 80,
+    width: 90,
   },
 });
 
-export default ViewPostScreen;
+export default ViewModifyScreen;

@@ -8,7 +8,6 @@ import {View} from 'react-native';
 const sigColor = '#CD67DE';
 
 function ChatRoomScreen({route}) {
-  //console.log('채팅 라우트 item 이것입니다.', route.params.item);
   //console.log('채팅 라우트 user_id 이것입니다.', route.params.user[0].user_id);
   //console.log('채팅방 유저정보는 이것입니다. : ', user);
   //const [messages, setMessages] = useState([]);
@@ -19,6 +18,7 @@ function ChatRoomScreen({route}) {
   const clientRef = useRef(null);
   const [currentUser, setCurrentUser] = useState(route.params.user[0].user_id);
   const [idCount, setIdCount] = useState(0);
+  const [chatNum, setChatNum] = useState();
 
   //const chatUrl = 'http://10.0.2.2:8080/ws-stomp';
   const chatUrl = 'http://52.78.130.186:8080/ws-stomp';
@@ -35,7 +35,6 @@ function ChatRoomScreen({route}) {
         createdAt: msg.cht_time,
         user: {_id: msg.cht_member},
       };
-      console.log(chat);
       setChatList([...chatList, chat]);
     }
   };
@@ -52,7 +51,6 @@ function ChatRoomScreen({route}) {
         '/pub/chat/sendMessage',
         JSON.stringify(send_message),
       );
-      console.log(send_message);
       console.log('메세지전송!!');
       return true;
     } catch (e) {

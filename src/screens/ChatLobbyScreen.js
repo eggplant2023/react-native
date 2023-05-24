@@ -20,7 +20,7 @@ function ChatLobbyScreen({user}) {
         // 성공 핸들링
         //console.log('chattingroom/guest/1 is : ', res.data);
         setChatRooms(res.data);
-        //console.log('chatRoom is : ', chatRooms);
+        console.log('res.data is : ', res.data);
       })
       .catch(function (error) {
         // 에러 핸들링
@@ -46,7 +46,11 @@ function ChatLobbyScreen({user}) {
         // console.log('text is : ', item.message[0].text);
         navigation.navigate('Room', {item, user});
       }}>
-      <ChatCard Chat_User={item.post_name} Chat_Content={item.last_cht_msg} />
+      <ChatCard
+        Chat_User={item.post_name}
+        Chat_Content={item.last_cht_msg}
+        photoURL={item.pictureURL}
+      />
     </Pressable>
   );
   return (
