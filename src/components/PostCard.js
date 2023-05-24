@@ -6,7 +6,7 @@ function PostCard({props}) {
   //   () => (createdAt ? new Date(createdAt._seconds * 1000) : new Date()),
   //   [createdAt],
   // );
-  console.log('포스트 카드의 props is : ', props);
+  //console.log('포스트 카드의 props is : ', props);
 
   return (
     <View style={styles.block}>

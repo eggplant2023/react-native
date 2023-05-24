@@ -7,8 +7,8 @@ import {useState, useEffect} from 'react';
 function App() {
   const user = [
     {
-      username: '박재윤',
-      id: 'qkrwodbs43',
+      username: '김성훈',
+      id: 'rlatjdgns43',
       passward: 1111,
       user_id: 1,
     },
@@ -19,8 +19,8 @@ function App() {
       user_id: 2,
     },
     {
-      username: '김성훈',
-      id: 'rlatjdgns43',
+      username: '박재윤',
+      id: 'qkrwodbs43',
       passward: 3333,
       user_id: 3,
     },

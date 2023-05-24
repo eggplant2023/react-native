@@ -8,15 +8,8 @@ function SaleCard(user) {
   const isFocused = useIsFocused(); // isFoucesd Define
   const navigation = useNavigation();
   const [posts, setPosts] = useState({});
-  const [filterdCard, setFilterdCard] = useState({});
-  // const photoUrl = [
-  //   require('ReactNativeFront/src/assets/image/model/1.jpeg'),
-  //   require('ReactNativeFront/src/assets/image/model/2.jpeg'),
-  //   require('ReactNativeFront/src/assets/image/model/3.jpeg'),
-  //   require('ReactNativeFront/src/assets/image/model/4.jpeg'),
-  //   require('ReactNativeFront/src/assets/image/model/5.jpeg'),
-  // ];
-  console.log(user);
+
+  console.log('sale card user : ', user.user);
   useEffect(() => {
     // 컴포넌트가 처음 마운트될 때 포스트 목록을 조회한 후 `posts` 상태에 담기
     axios
@@ -24,12 +17,17 @@ function SaleCard(user) {
       .then(function (res) {
         // 성공 핸들링
         //console.log('SaleCard res data is : ', res.data);
-        // let temp = res.data;
-        // for (let i = 0; i < temp.length; i++) {
-        //   temp[i] = {...temp[i], photoUrl: photoUrl[i]};
-        // }
-        setPosts(res.data);
-        filterCard();
+        let temp = [];
+
+        res.data
+          .filter(item => item.user_num === user.user)
+          .map((i, index) => {
+            const test = i;
+            temp[index] = test;
+            //console.log('맵 temp is : ', temp);
+          });
+        //console.log('필터된 temp 값은', temp);
+        setPosts(temp);
       })
       .catch(function (error) {
         // 에러 핸들링
@@ -40,16 +38,10 @@ function SaleCard(user) {
         // 항상 실행되는 영역
       });
   }, [isFocused]);
-  function filterCard() {
-    posts.map(item => {
-      console.log('filterCard is :', item);
-      const test = user.filter(item => item.id == checkId);
-    });
-  }
   const renderItem = ({item}) => (
     <Pressable
       onPress={() => {
-        navigation.navigate('View', item);
+        navigation.navigate('ProfileView', item);
       }}>
       <PostCard props={item} />
     </Pressable>

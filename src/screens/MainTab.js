@@ -36,7 +36,9 @@ function MainTab({user}) {
             />
             <Tab.Screen
               name="HomeStack"
-              component={HomeStack}
+              children={() => {
+                return <HomeStack user={user} />;
+              }}
               options={{
                 tabBarIcon: ({color}) => (
                   <Icon name="home" size={24} color={color} />
