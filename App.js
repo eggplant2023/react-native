@@ -3,34 +3,49 @@ import MainTab from './src/screens/MainTab';
 import Login from './src/screens/Login';
 import {View} from 'react-native';
 import {useState, useEffect} from 'react';
+import {PermissionsAndroid} from 'react-native';
 
 function App() {
-  const user = [
-    {
-      username: '김성훈',
-      id: 'rlatjdgns43',
-      passward: 1111,
-      user_id: 1,
-    },
-    {
-      username: '김승우',
-      id: 'rlatmddn43',
-      passward: 2222,
-      user_id: 2,
-    },
-    {
-      username: '박재윤',
-      id: 'qkrwodbs43',
-      passward: 3333,
-      user_id: 3,
-    },
-    {
-      username: '김현근',
-      id: 'rlagusrms43',
-      passward: 4444,
-      user_id: 4,
-    },
-  ];
+  useEffect(() => {
+    PermissionsAndroid.requestMultiple([
+      PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    ]);
+  }, []);
+  // const user = [
+  //   {
+  //     id: '1',
+  //     passward: 1,
+  //     user_id: 1,
+  //   },
+  //   {
+  //     id: '2',
+  //     passward: 2,
+  //     user_id: 2,
+  //   },
+  //   {
+  //     id: '3',
+  //     passward: 3,
+  //     user_id: 3,
+  //   },
+  //   {
+  //     id: '4',
+  //     passward: 4,
+  //     user_id: 4,
+  //   },
+  // ];
+  const user = [];
+
+  for (let i = 1; i <= 70; i++) {
+    user.push({
+      id: i.toString(),
+      passward: i,
+      user_id: i,
+    });
+  }
+  useEffect(() => {
+    console.log('user list : ', user);
+  }, []);
   const [state, setState] = useState(false);
   const [loginUser, setLoginUser] = useState({
     id: '',
@@ -44,7 +59,7 @@ function App() {
       {state == false ? (
         <Login user={user} setState={setState} setLoginUser={setLoginUser} />
       ) : (
-        <MainTab user={loginUser} />
+        <MainTab user={loginUser} setState={setState} />
       )}
     </>
   );

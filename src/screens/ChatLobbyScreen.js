@@ -47,7 +47,7 @@ function ChatLobbyScreen({user}) {
         navigation.navigate('Room', {item, user});
       }}>
       <ChatCard
-        Chat_User={item.post_name}
+        Chat_Title={item.post_name}
         Chat_Content={item.last_cht_msg}
         photoURL={item.pictureURL}
       />

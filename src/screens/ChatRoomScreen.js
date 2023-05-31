@@ -1,14 +1,15 @@
-import {GiftedChat, SystemMessage, Bubble} from 'react-native-gifted-chat';
+import {GiftedChat, Bubble} from 'react-native-gifted-chat';
 import {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import React from 'react';
 import SockJsClient from 'react-stomp';
 import {View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
 const sigColor = '#CD67DE';
 
 function ChatRoomScreen({route}) {
-  //console.log('채팅 라우트 user_id 이것입니다.', route.params.user[0].user_id);
+  console.log('채팅 라우트 user_id 이것입니다.', route.params);
   //console.log('채팅방 유저정보는 이것입니다. : ', user);
   //const [messages, setMessages] = useState([]);
   const [chatList, setChatList] = useState([]);
@@ -19,13 +20,18 @@ function ChatRoomScreen({route}) {
   const [currentUser, setCurrentUser] = useState(route.params.user[0].user_id);
   const [idCount, setIdCount] = useState(0);
   const [chatNum, setChatNum] = useState();
+  const navigation = useNavigation();
 
   //const chatUrl = 'http://10.0.2.2:8080/ws-stomp';
   const chatUrl = 'http://52.78.130.186:8080/ws-stomp';
 
+  // useEffect(() => {
+  //   navigation.addListener('blur', () => navigation.replace('Lobby'));
+  // }, []);
+
   const onMessageReceive = (msg, topic) => {
-    console.log('메세지 수신');
-    console.log(msg);
+    // console.log('메세지 수신');
+    // console.log(msg);
     if (msg.cht_room_num == route.params.item.cht_room_no) {
       const chat = {
         _id: idCount,
@@ -34,7 +40,9 @@ function ChatRoomScreen({route}) {
         //author: msg.cht_member_name,
         createdAt: msg.cht_time,
         user: {_id: msg.cht_member},
+        //image: msg.cht_member_profile,
       };
+      console.log(msg.cht_member_profile);
       setChatList([...chatList, chat]);
     }
   };
@@ -78,16 +86,27 @@ function ChatRoomScreen({route}) {
         `http://52.78.130.186:8080/api/chatting/${route.params.item.cht_room_no}`,
       )
       .then(function (res) {
+        //console.log('res.data 는 이것입니다.', res.data);
         let temp = res.data.chattingList;
         setIdCount(temp.length);
         temp.map((item, index) => {
-          const chat = {
-            _id: index,
-            text: item.cht_text,
-            createdAt: item.cht_time,
-            user: {_id: item.cht_member},
-          };
-          temp[index] = chat;
+          if (currentUser == item.cht_member) {
+            const chat = {
+              _id: index,
+              text: item.cht_text,
+              createdAt: item.cht_time,
+              user: {_id: item.cht_member},
+            };
+            temp[index] = chat;
+          } else {
+            const chat = {
+              _id: index,
+              text: item.cht_text,
+              createdAt: item.cht_time,
+              user: {_id: item.cht_member, avatar: item.cht_member_profile},
+            };
+            temp[index] = chat;
+          }
         });
         setChatList(temp);
       })
@@ -103,8 +122,8 @@ function ChatRoomScreen({route}) {
 
   useEffect(() => {
     if (!!idCount) {
-      console.log('idCount is : ', idCount);
-      console.log('chatList is : ', chatList);
+      //console.log('idCount is : ', idCount);
+      //console.log('chatList 는 이것입니다. : ', chatList);
     }
   }, [idCount]);
 
@@ -136,7 +155,7 @@ function ChatRoomScreen({route}) {
           },
           left: {
             backgroundColor: '#E6E6E6',
-            marginLeft: '5%',
+            marginLeft: '1%',
             marginVertical: 5,
           },
         }}
@@ -159,12 +178,11 @@ function ChatRoomScreen({route}) {
         //   textInputStyle={{alignSelf: 'center'}}
         //   onPressActionButton={() => {}}
         //   alwaysShowSend={true}
-        //   showUserAvatar={true}
+        showUserAvatar={true}
         //   placeholder="메시지를 입력하세요."
-        //   user={{
-        //     _id: 2,
-        //     name: 'beanzinu',
-        //  }}
+        user={{
+          _id: route.params.item.cht_room_no,
+        }}
       />
       <SockJsClient
         url={chatUrl}

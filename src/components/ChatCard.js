@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import {View, StyleSheet, Text, Image, Pressable} from 'react-native';
 
-function ChatCard({Chat_User, Chat_Content, photoURL}) {
+function ChatCard({Chat_Title, Chat_Content, photoURL}) {
   const onOpenProfile = () => {
     // TODO: 사용자 프로필 화면 열기
   };
@@ -13,14 +13,16 @@ function ChatCard({Chat_User, Chat_Content, photoURL}) {
         style={styles.image}
         resizeMethod="resize"
         resizeMode="cover"
+        borderRadius={30}
       />
       <View style={styles.textBlock}>
-        <Text>{Chat_User}</Text>
-        <Text></Text>
-        <Text>{Chat_Content}</Text>
-      </View>
-      <View style={styles.paddingBlock}>
-        {/* <Text style={styles.description}>{description}</Text> */}
+        <Text style={{fontFamily: 'GmarketSansTTFBold', fontSize: 15}}>
+          {Chat_Title}
+        </Text>
+
+        <Text style={{fontFamily: 'NotoSansKR-Light', marginTop: 0}}>
+          {Chat_Content}
+        </Text>
       </View>
     </View>
   );
@@ -30,7 +32,10 @@ const styles = StyleSheet.create({
   block: {
     paddingTop: 16,
     paddingBottom: 16,
+    height: 100,
     flexDirection: 'row', // 혹은 'column'
+    borderBottomWidth: 3,
+    borderColor: 'white',
   },
   textBlock: {
     flexDirection: 'column',
@@ -58,8 +63,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#bdbdbd',
     width: '20%',
     aspectRatio: 1,
-    marginBottom: 16,
-    marginLeft: 20,
+    marginTop: -7,
+    marginLeft: 10,
   },
   description: {
     fontSize: 16,
