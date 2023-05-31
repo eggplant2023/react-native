@@ -1,82 +1,152 @@
+import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
-import CategoryCard from '../components/CategoryCard';
 import SaleCard from '../components/SaleCard';
+import VisitCard from '../components/VisitCard';
+import FavoriteCard from '../components/FavoriteCard';
+import {useNavigation} from '@react-navigation/native';
 
-function MyProfileScreen({user}) {
-  //console.log('MyProfileScreen user is : ', user[0].id);
-  const [state, setState] = useState('구매 내역');
+function MyProfileScreen({user, setState}) {
+  console.log('MyProfileScreen user is : ', user);
+  const [barState, setBarState] = useState('방문 내역');
+  const [userImage, setUserImage] = useState('');
+  const [pothoUri, setPothoUri] = useState([]);
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+
+  const logout = () => {
+    console.log('logout press');
+    setState(false);
+  };
+
+  const navigation = useNavigation();
+  const sigColor = '#CD67DE';
   useEffect(() => {
-    //console.log('state is : ', state);
-  }, [state]);
+    navigation.setOptions({
+      title: '가지마켓',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+        color: sigColor,
+      },
+    });
+  }, [navigation]);
 
+  useEffect(() => {
+    axios
+      .get(`http://52.78.130.186:8080/api/user/${user[0].user_id}`)
+      .then(res => {
+        //console.log(res.data);
+        setUserImage(res.data);
+      });
+  });
+  useEffect(() => {
+    axios
+      .get(`http://52.78.130.186:8080/api/user/info/${user[0].user_id}`)
+      .then(res => {
+        // console.log(res.data);
+        setUserName(res.data.nickname);
+        setUserEmail(res.data.user_acc);
+      });
+  });
   return (
     <View style={styles.block}>
       <View style={styles.topBlock}>
         <View style={styles.userBlock}>
-          <Image
-            source={require('ReactNativeFront/src/assets/image/profile.jpg')}
-            style={styles.userImage}
-            resizeMode="stretch"
-          />
-          <Text
-            style={{
-              fontSize: 20,
-              color: 'black',
-              fontWeight: 'bold',
-              marginLeft: 15,
-            }}>
-            {user[0].id}
-          </Text>
+          <Pressable
+            onPress={() => {
+              console.log('sadasfdsfkjdsajbfdskjdsaljk');
+            }}
+            style={styles.userImage}>
+            <Image
+              source={{
+                uri: userImage,
+              }}
+              resizeMode="stretch"
+              style={styles.userImage1}
+            />
+          </Pressable>
+          <View style={{marginTop: -6}}>
+            <Text
+              style={{
+                fontSize: 20,
+                color: 'black',
+                fontWeight: '100',
+                marginLeft: 15,
+                marginTop: 10,
+                fontFamily: 'GmarketSansTTFBold',
+              }}>
+              {userName}
+            </Text>
+            <Text style={{marginLeft: 15}}>{userEmail}</Text>
+          </View>
         </View>
+        <Pressable
+          style={{alignSelf: 'flex-end', marginRight: 15, marginTop: -25}}
+          onPress={() => logout()}>
+          <Text>로그아웃</Text>
+        </Pressable>
         <View style={styles.btnBlock}>
-          <Pressable onPress={() => setState('구매 내역')}>
+          <Pressable onPress={() => setBarState('방문 내역')}>
             <View style={styles.viewBtn}>
               <Image
                 style={styles.picBtn}
                 source={require('ReactNativeFront/src/assets/image/receipt.jpg')}
               />
-              <Text style={{fontWeight: 'bold', color: 'black'}}>
-                구매 내역
-              </Text>
+              {barState == '방문 내역' ? (
+                <Text style={{fontWeight: 'bold', color: sigColor}}>
+                  방문 내역
+                </Text>
+              ) : (
+                <Text style={{fontWeight: 'bold', color: 'black'}}>
+                  방문 내역
+                </Text>
+              )}
             </View>
           </Pressable>
-          <Pressable onPress={() => setState('판매 내역')}>
+          <Pressable onPress={() => setBarState('판매 내역')}>
             <View style={styles.viewBtn}>
               <Image
                 style={styles.picBtn}
                 source={require('ReactNativeFront/src/assets/image/basket.jpg')}
               />
-              <Text style={{fontWeight: 'bold', color: 'black'}}>
-                판매 내역
-              </Text>
+              {barState == '판매 내역' ? (
+                <Text style={{fontWeight: 'bold', color: sigColor}}>
+                  판매 내역
+                </Text>
+              ) : (
+                <Text style={{fontWeight: 'bold', color: 'black'}}>
+                  판매 내역
+                </Text>
+              )}
             </View>
           </Pressable>
-          <Pressable onPress={() => setState('관심 카테고리')}>
+          <Pressable onPress={() => setBarState('관심 게시글')}>
             <View style={styles.viewBtn}>
               <Image
                 style={styles.picBtn}
                 source={require('ReactNativeFront/src/assets/image/category.jpg')}
               />
-              <Text style={{fontWeight: 'bold', color: 'black'}}>
-                관심 카테고리
-              </Text>
+              {barState == '관심 게시글' ? (
+                <Text style={{fontWeight: 'bold', color: sigColor}}>
+                  관심 게시글
+                </Text>
+              ) : (
+                <Text style={{fontWeight: 'bold', color: 'black'}}>
+                  관심 게시글
+                </Text>
+              )}
             </View>
           </Pressable>
         </View>
       </View>
-      <View style={styles.middleBlock}>
-        <Text style={{fontSize: 20, fontWeight: 'bold', color: 'black'}}>
-          {state}
-        </Text>
-      </View>
+
       <View style={styles.bottomBlock}>
         {
           {
-            '구매 내역': <SaleCard user={user[0].user_id} />,
+            '방문 내역': <VisitCard user={user} />,
             '판매 내역': <SaleCard user={user[0].user_id} />,
-            '관심 카테고리': <CategoryCard />,
-          }[state]
+            '관심 게시글': <FavoriteCard user={user} />,
+          }[barState]
         }
       </View>
     </View>
@@ -109,6 +179,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // 혹은 'column'
     alignItems: 'center',
     marginTop: 5,
+    //justifyContent: 'center',
   },
   image: {
     backgroundColor: '#bdbdbd',
@@ -125,6 +196,13 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     marginLeft: 15,
     borderRadius: 100,
+  },
+  userImage1: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 100,
+    aspectRatio: 1,
   },
   btnBlock: {
     flexDirection: 'row',
