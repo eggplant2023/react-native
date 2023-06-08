@@ -151,11 +151,14 @@ function UploadScreen({user}) {
           'Content-Type': 'multipart/form-data',
         },
       })
+      .then(() => {
+        console.log('포스팅 완료');
+        navigation.reset({routes: [{name: 'Feed'}]});
+      })
       .catch(function (error) {
         // console.log('여기를 탔음 1');
         console.log(error);
       });
-    navigation.navigate('Feed');
   };
 
   useEffect(() => {
@@ -312,7 +315,7 @@ function UploadScreen({user}) {
               marginTop: 5,
               marginBottom: 10,
             }}>
-            {fairPrice} 원 입니다.
+            {fairPrice?.toString().split('.')[0]} 원 입니다.
           </Text>
         </View>
         <TextInput

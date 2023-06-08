@@ -3,7 +3,7 @@ import {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import React from 'react';
 import SockJsClient from 'react-stomp';
-import {View} from 'react-native';
+import {Pressable, View, Text} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 const sigColor = '#CD67DE';

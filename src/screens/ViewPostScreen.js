@@ -30,11 +30,11 @@ function ViewPostScreen(route) {
   const sigColor = '#CD67DE';
   const navigation = useNavigation();
   const [starMark, setStarMark] = useState();
-  const [cardColor, setCardColor] = useState('');
+  //const [cardColor, setCardColor] = useState('');
   const [reportStatus, setReportStatus] = useState(true);
   const [userCheck, setUserCheck] = useState(true);
 
-  console.log('상세 보기 route user_num : ', route.route.params.item.user_num);
+  console.log('상세 보기  route.route.params : ', route.route.params);
   useEffect(() => {
     if (
       route.route.params.user.user[0].user_id ==
@@ -134,37 +134,37 @@ function ViewPostScreen(route) {
       });
   };
 
-  useEffect(() => {
-    // console.log('가격', props.price);
-    // console.log('공정 가격', props.fairPrice.toFixed());
-    if (
-      (route.route.params.item.price / route.route.params.item.fairPrice) *
-        100 >
-        70 &&
-      (route.route.params.item.price / route.route.params.item.fairPrice) *
-        100 <
-        130
-    ) {
-      if (route.route.params.item.isCaptured == 0) {
-        setCardColor(warnColor.warn);
-      } else if (route.route.params.item.isCaptured == 1) {
-        setCardColor(warnColor.safe);
-      }
-    } else if (
-      (route.route.params.item.price / route.route.params.item.fairPrice) *
-        100 <=
-        70 ||
-      (route.route.params.item.price / route.route.params.item.fairPrice) *
-        100 >=
-        130
-    ) {
-      if (route.route.params.item.isCaptured == 0) {
-        setCardColor(warnColor.alert);
-      } else if (route.route.params.item.isCaptured == 1) {
-        setCardColor(warnColor.warn);
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   // console.log('가격', props.price);
+  //   // console.log('공정 가격', props.fairPrice.toFixed());
+  //   if (
+  //     (route.route.params.item.price / route.route.params.item.fairPrice) *
+  //       100 >
+  //       70 &&
+  //     (route.route.params.item.price / route.route.params.item.fairPrice) *
+  //       100 <
+  //       130
+  //   ) {
+  //     if (route.route.params.item.isCaptured == 0) {
+  //       setCardColor(warnColor.warn);
+  //     } else if (route.route.params.item.isCaptured == 1) {
+  //       setCardColor(warnColor.safe);
+  //     }
+  //   } else if (
+  //     (route.route.params.item.price / route.route.params.item.fairPrice) *
+  //       100 <=
+  //       70 ||
+  //     (route.route.params.item.price / route.route.params.item.fairPrice) *
+  //       100 >=
+  //       130
+  //   ) {
+  //     if (route.route.params.item.isCaptured == 0) {
+  //       setCardColor(warnColor.alert);
+  //     } else if (route.route.params.item.isCaptured == 1) {
+  //       setCardColor(warnColor.warn);
+  //     }
+  //   }
+  // }, []);
 
   const doingReport = () => {
     setReportStatus(false);
@@ -225,7 +225,7 @@ function ViewPostScreen(route) {
               flexDirection: 'column',
               paddingLeft: 10,
               paddingRight: 10,
-              backgroundColor: cardColor,
+              backgroundColor: route.route.params.cardColor,
             }}>
             <Text
               style={{
@@ -345,6 +345,7 @@ function ViewPostScreen(route) {
               최근 거래가 :{' '}
               {route.route.params.item.fairPrice
                 .toString()
+                .split('.')[0]
                 .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{' '}
               원
             </Text>
@@ -366,7 +367,7 @@ function ViewPostScreen(route) {
 
 const styles = StyleSheet.create({
   block: {
-    flex: 1,
+    //flex: 1,
 
     backgroundColor: 'white',
     flexDirection: 'column', // 혹은 'column'

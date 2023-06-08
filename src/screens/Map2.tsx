@@ -52,8 +52,8 @@ const Map2: React.FC<IProps> = ({user1, model, setModel}) => {
       position => {
         const {latitude, longitude} = position.coords;
         setLocation({
-          latitude: 37.5,
-          longitude: 127.5,
+          latitude,
+          longitude,
         });
       },
       (error: any) => {
