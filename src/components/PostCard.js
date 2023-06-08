@@ -52,7 +52,7 @@ function PostCard({props}) {
         setMsgColor('#DF0101');
       }
     }
-  }, []);
+  }, [props]);
   return (
     <View
       style={{

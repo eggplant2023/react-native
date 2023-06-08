@@ -1,14 +1,37 @@
 import {useNavigation, useIsFocused} from '@react-navigation/native';
 import {useState, useEffect} from 'react';
-import {StyleSheet, View, FlatList, Pressable} from 'react-native';
+import {StyleSheet, View, FlatList, Pressable, Text} from 'react-native';
 import ChatCard from '../components/ChatCard';
 import ChatRoomScreen from './ChatRoomScreen';
 import axios from 'axios';
+import IconQna from '../components/IconQna';
+
+const sigColor = '#CD67DE';
 
 function ChatLobbyScreen({user}) {
   const navigation = useNavigation();
   const [chatRooms, setChatRooms] = useState([{}]);
   const isFocused = useIsFocused(); // isFoucesd Define
+
+  // const createChattingroom = () => {
+  //   console.log('user : ', user);
+  //   axios
+  //     .get(
+  //       `http://52.78.130.186:8080/api/chattingroom/post/1/${user[0].user_id}`,
+  //     )
+  //     .then(res => {
+  //       let item = res.data;
+  //       // let user = route.route.params.user.user;
+
+  //       navigation.navigate('Chat', {item, user});
+  //     });
+  // };
+
+  // useEffect(() => {
+  //   navigation.setOptions({
+  //     headerRight: () => <IconQna onPress={createChattingroom} />,
+  //   });
+  // }, [navigation]);
 
   useEffect(() => {
     // 컴포넌트가 처음 마운트될 때 포스트 목록을 조회한 후 `posts` 상태에 담기
@@ -63,6 +86,11 @@ function ChatLobbyScreen({user}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  block: {
+    marginRight: -8,
+    borderRadius: 24,
+    overflow: 'hidden',
   },
 });
 

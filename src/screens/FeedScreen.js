@@ -12,6 +12,12 @@ import PlusButton from '../components/PlusButton';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import CustomPicker from '../components/CustomPicker';
 
+const warnColor = {
+  safe: '#EDE7FD',
+  warn: '#FEF9E9',
+  alert: '#FBD9D9',
+};
+
 function FeedScreen({user1, model, setModel}) {
   const [posts, setPosts] = useState({});
   //const [model, setModel] = useState('Galaxy Note 10');
@@ -19,6 +25,7 @@ function FeedScreen({user1, model, setModel}) {
   const isFocused = useIsFocused(); // isFoucesd Define
   const sigColor = '#CD67DE';
   const [visible, setVisible] = useState(0);
+  //const [cardColor, setCardColor] = useState('');
 
   useEffect(() => {
     if (model == 'everything') {
@@ -73,9 +80,34 @@ function FeedScreen({user1, model, setModel}) {
   const renderItem = ({item}) => (
     <Pressable
       onPress={() => {
-        console.log('피드 스크린에서 유저값은 이것입니다 : ', user1);
+        let cardColor;
+        if (
+          (item.price / item.fairPrice) * 100 > 70 &&
+          (item.price / item.fairPrice) * 100 < 130
+        ) {
+          if (item.isCaptured == 0) {
+            console.log('주의 탐');
+            cardColor = warnColor.warn;
+          } else if (item.isCaptured == 1) {
+            console.log('안전 탐');
+            cardColor = warnColor.safe;
+          }
+        } else if (
+          (item.price / item.fairPrice) * 100 <= 70 ||
+          (item.price / item.fairPrice) * 100 >= 130
+        ) {
+          if (item.isCaptured == 0) {
+            cardColor = warnColor.alert;
+            console.log('위험 탐');
+          } else if (item.isCaptured == 1) {
+            cardColor = warnColor.warn;
+            console.log('주의 탐');
+          }
+        }
+
+        console.log('피드 스크린에서 item값은 이것입니다 : ', item);
         const user = {user: user1};
-        navigation.navigate('View', {item, user});
+        navigation.navigate('View', {item, user, cardColor});
       }}>
       <PostCard props={item} />
     </Pressable>
